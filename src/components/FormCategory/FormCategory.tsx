@@ -1,18 +1,42 @@
 import Grid from "@mui/material/Grid2";
-import {Button, IconButton, MenuItem, Select, SelectChangeEvent, TextField, Typography} from "@mui/material";
+import {
+    Button,
+    CircularProgress,
+    IconButton,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    TextField,
+    Typography
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import React, {useState} from "react";
-import {useAppDispatch} from "../../app/hooks.ts";
+import React, {useEffect, useState} from "react";
+import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import {toggleModal} from "../../containers/slices/sliceModal/sliceModal.tsx";
+import {addCategory, ICategory, updateCategory} from "../../containers/slices/sliceCategory/sliceCategory.tsx";
+import {useNavigate, useParams} from "react-router-dom";
 
-const initialCategories = {
+const initialCategories: ICategory = {
+    id: '',
     name:'',
     type:'',
 };
 
 const FormCategory = () => {
+    const {id} = useParams();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState(initialCategories);
     const dispatch = useAppDispatch();
+    const categories = useAppSelector(state => state.category.categories);
+    const category = categories.find(c => c.id === id);
+    const { isLoading } = useAppSelector((state) => state.category);
+
+    useEffect(() => {
+        if (id && category) {
+            setFormData(category);
+        }
+    }, [id, category]);
+
 
     const handleClose = () => {
         dispatch(toggleModal(false));
@@ -34,8 +58,14 @@ const FormCategory = () => {
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Form Data:", formData);
+        if (id) {
+            await dispatch(updateCategory(formData));
+        } else {
+            await dispatch(addCategory(formData));
+        }
         setFormData(initialCategories);
+        handleClose();
+        navigate("/categories");
     };
 
     return (
@@ -73,10 +103,10 @@ const FormCategory = () => {
                 </IconButton>
                 <Typography
                     id="modal-title"
-                    sx={{ mb: 2, textAlign: "center", fontWeight: "bold" }}
+                    sx={{ mb: 2, textAlign: "center", fontWeight: "bold", color: 'black' }}
                     variant="h4"
                 >
-                    Add Categories
+                    {id ? "Edit Category" : "Add Category"}
                 </Typography>
                 <form onSubmit={onSubmit} style={{ width: "100%" }}>
                     <Grid container spacing={2}>
@@ -108,8 +138,8 @@ const FormCategory = () => {
                                 <MenuItem value="" disabled>
                                     Select Type
                                 </MenuItem>
-                                <MenuItem value="income">Income</MenuItem>
-                                <MenuItem value="expense">Expense</MenuItem>
+                                <MenuItem value="Income">Income</MenuItem>
+                                <MenuItem value="Expense">Expense</MenuItem>
                             </Select>
                         </Grid>
                         <Grid size={12} sx={{ textAlign: "center" }}>
@@ -126,8 +156,9 @@ const FormCategory = () => {
                                         backgroundColor: "#0a0d12",
                                     },
                                 }}
+                                disabled={isLoading}
                             >
-                                Save
+                                {isLoading ? <CircularProgress size={20} sx={{ color: "white" }} /> : 'Save'}
                             </Button>
                         </Grid>
                     </Grid>

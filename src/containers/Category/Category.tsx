@@ -1,15 +1,29 @@
-import {Button, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import {useAppDispatch} from "../../app/hooks.ts";
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import ModalForm from "../../components/ModalForm/ModalForm.tsx";
 import {toggleModal} from "../slices/sliceModal/sliceModal.tsx";
+import {deleteCategory, fetchCategory} from "../slices/sliceCategory/sliceCategory.tsx";
+import {useEffect} from "react";
+import {NavLink} from "react-router-dom";
 
 const Category = () => {
     const dispatch = useAppDispatch();
+    const { categories } = useAppSelector((state) => state.category);
+
+    useEffect(() => {
+        dispatch(fetchCategory());
+    }, [dispatch]);
 
     const openModal = () => {
         dispatch(toggleModal(true));
     };
+
+    function deleteThisCategory(id: string) {
+        dispatch(deleteCategory(id));
+    }
 
     return (
         <>
@@ -19,6 +33,7 @@ const Category = () => {
                 sx={{
                     justifyContent: "space-between",
                     alignItems: "center",
+                    marginBottom: '20px',
 
                 }}>
                 <Grid size={6}>
@@ -48,6 +63,84 @@ const Category = () => {
                         Add
                     </Button>
                 </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+                {categories.map((category) => (
+                    <Grid size={12} key={category.id}>
+                        <Card
+                            sx={{
+                                minWidth: 275,
+                                backgroundColor: "inherit",
+                                border: "3px solid",
+                                borderRadius: "10px",
+                                p: 1,
+                            }}
+                        >
+                            <CardContent
+                                sx={{
+                                    backgroundColor: "white",
+                                    mb: 1,
+                                    textAlign: "center",
+                                    display: "flex",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Grid size={12}
+                                      sx={{
+                                          display: "flex",
+                                          alignItems: "center"
+                                      }}>
+                                    <Typography sx={{fontSize: 20, fontWeight: 600, ml: 1}}>
+                                        {category.name}
+                                    </Typography>
+                                    <CardActions sx={{ marginLeft: "auto" }}>
+                                        <Typography
+                                            sx={{
+                                                fontSize: 20,
+                                                fontWeight: 600,
+                                                ml: 1,
+                                                mr: 3,
+                                                color: category.type === 'Income' ? 'green' : (category.type === 'Expense' ? 'red' : 'black')
+                                            }}
+                                        >
+                                            {category.type}
+                                        </Typography>
+                                        <Button
+                                            component={NavLink}
+                                            to={`/${category.id}/edit`}
+                                            variant="contained"
+                                            sx={{ mr: 2,
+                                                backgroundColor: '#1e012b',
+                                                transition: 'all 0.3s ease',
+                                                '&:hover': {
+                                                    transform: 'scale(1.05)',
+                                                },
+                                            }}
+                                        >
+                                            <DriveFileRenameOutlineIcon/>
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            sx={{ mr: 2,
+                                                transition: 'all 0.3s ease',
+                                                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                                                '&:hover': {
+                                                    boxShadow: '0 8px 15px rgba(0, 0, 0, 0.3)',
+                                                    transform: 'scale(1.05)',
+                                                },
+                                            }}
+                                            onClick={() => deleteThisCategory(category.id)}
+
+                                        >
+                                            <DeleteIcon/>
+                                        </Button>
+                                    </CardActions>
+                                </Grid>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
             </Grid>
             <ModalForm/>
         </>
