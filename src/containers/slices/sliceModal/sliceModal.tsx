@@ -1,32 +1,28 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-export interface Category {
-    name: string;
-    type: string;
-}
-
-interface CategoryState {
+interface ModalState {
     isModalOpen: boolean;
-    selectedCategory: Category | null;
+    modalType: "category" | "transaction" | null;
 }
 
-const initialState: CategoryState = {
+const initialState: ModalState = {
     isModalOpen: false,
-    selectedCategory: null,
+    modalType: null,
 };
 
 export const sliceModal = createSlice({
     name: 'modal',
     initialState,
     reducers: {
-        selectedCategory(state, action: PayloadAction<Category | null>) {
-            state.selectedCategory = action.payload;
-        },
-        toggleModal(state, action: PayloadAction<boolean>) {
-            state.isModalOpen = action.payload;
+        toggleModal(
+            state,
+            action: PayloadAction<{ isOpen: boolean; modalType?: "category" | "transaction" | null }>
+        ) {
+            state.isModalOpen = action.payload.isOpen;
+            state.modalType = action.payload.modalType ?? null;
         },
     },
 });
 
-export const { selectedCategory, toggleModal } = sliceModal.actions;
+export const { toggleModal } = sliceModal.actions;
 export const modalReducer = sliceModal.reducer;

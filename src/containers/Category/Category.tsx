@@ -1,4 +1,4 @@
-import {Button, Card, CardActions, CardContent, Typography} from "@mui/material";
+import {Alert, Button, Card, CardActions, CardContent, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -8,17 +8,18 @@ import {toggleModal} from "../slices/sliceModal/sliceModal.tsx";
 import {deleteCategory, fetchCategory} from "../slices/sliceCategory/sliceCategory.tsx";
 import {useEffect} from "react";
 import {NavLink} from "react-router-dom";
+import Loader from "../../UI/Loader/Loader.tsx";
 
 const Category = () => {
     const dispatch = useAppDispatch();
-    const { categories } = useAppSelector((state) => state.category);
+    const { categories, error, isLoading  } = useAppSelector((state) => state.category);
 
     useEffect(() => {
         dispatch(fetchCategory());
     }, [dispatch]);
 
-    const openModal = () => {
-        dispatch(toggleModal(true));
+    const handleOpenCategory = () => {
+        dispatch(toggleModal({ isOpen: true, modalType: "category" }));
     };
 
     function deleteThisCategory(id: string) {
@@ -58,12 +59,17 @@ const Category = () => {
                                 transform: "scale(1.05)",
                             },
                         }}
-                        onClick={openModal}
+                        onClick={handleOpenCategory}
                     >
                         Add
                     </Button>
                 </Grid>
             </Grid>
+            {isLoading ? (
+                <Loader />
+            ) : error ? (
+                <Alert severity="error">No data. Try again!</Alert>
+            ) : (
             <Grid container spacing={2}>
                 {categories.map((category) => (
                     <Grid size={12} key={category.id}>
@@ -142,6 +148,7 @@ const Category = () => {
                     </Grid>
                 ))}
             </Grid>
+            )}
             <ModalForm/>
         </>
     );

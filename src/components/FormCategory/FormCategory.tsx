@@ -1,20 +1,10 @@
 import Grid from "@mui/material/Grid2";
-import {
-    Button,
-    CircularProgress,
-    IconButton,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    TextField,
-    Typography
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import {Button, CircularProgress, MenuItem, Select, SelectChangeEvent, TextField, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
-import {toggleModal} from "../../containers/slices/sliceModal/sliceModal.tsx";
 import {addCategory, ICategory, updateCategory} from "../../containers/slices/sliceCategory/sliceCategory.tsx";
 import {useNavigate, useParams} from "react-router-dom";
+import {toggleModal} from "../../containers/slices/sliceModal/sliceModal.tsx";
 
 const initialCategories: ICategory = {
     id: '',
@@ -37,11 +27,6 @@ const FormCategory = () => {
         }
     }, [id, category]);
 
-
-    const handleClose = () => {
-        dispatch(toggleModal(false));
-    };
-
     const onChangeTextField = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -49,6 +34,7 @@ const FormCategory = () => {
             [name]: value,
         }));
     };
+
     const onChangeSelect = (e: SelectChangeEvent<string>) => {
         setFormData((prev) => ({
             ...prev,
@@ -64,51 +50,20 @@ const FormCategory = () => {
             await dispatch(addCategory(formData));
         }
         setFormData(initialCategories);
-        handleClose();
         navigate("/categories");
-    };
+        dispatch(toggleModal({ isOpen: false}));
+        };
 
     return (
         <>
-            <Grid
-                container
-                spacing={2}
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    mx: "auto",
-                    width: "40%",
-                    border: "3px solid #052f46",
-                    borderRadius: "10px",
-                    p: 4,
-                    backgroundColor: "white",
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.3)",
-                }}
-            >
-                <IconButton
-                    onClick={handleClose}
-                    sx={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        color: "gray",
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
-                <Typography
-                    id="modal-title"
-                    sx={{ mb: 2, textAlign: "center", fontWeight: "bold", color: 'black' }}
-                    variant="h4"
-                >
-                    {id ? "Edit Category" : "Add Category"}
-                </Typography>
-                <form onSubmit={onSubmit} style={{ width: "100%" }}>
+        <Typography
+            sx={{ mb: 2, textAlign: "center", fontWeight: "bold", color: 'black' }}
+            variant="h4"
+        >
+            {id ? "Edit Category" : "Add Category"}
+        </Typography>
+
+        <form onSubmit={onSubmit} style={{ width: "100%" }}>
                     <Grid container spacing={2}>
                         <Grid size={12}>
                             <TextField
@@ -163,7 +118,6 @@ const FormCategory = () => {
                         </Grid>
                     </Grid>
                 </form>
-            </Grid>
         </>
     );
 };

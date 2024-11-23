@@ -1,14 +1,15 @@
-import {
-    AppBar,
-    Box,
-    Button,
-    Container,
-    Toolbar,
-    Typography,
-} from "@mui/material";
-import { NavLink } from "react-router-dom";
+import {AppBar, Box, Button, Container, Toolbar, Typography,} from "@mui/material";
+import {NavLink} from "react-router-dom";
+import {useAppDispatch} from "../../app/hooks.ts";
+import {toggleModal} from "../../containers/slices/sliceModal/sliceModal.tsx";
 
 const Navbar = () => {
+    const dispatch = useAppDispatch();
+
+    const handleOpenTransaction = () => {
+        dispatch(toggleModal({ isOpen: true, modalType: "transaction" }));
+    };
+
     return (
         <>
             <Box sx={{ flexGrow: 1, mb: 5 }}>
@@ -59,9 +60,7 @@ const Navbar = () => {
                                 </Button>
                             </Box>
                             <Button
-                                to="/add"
                                 variant="outlined"
-                                component={NavLink}
                                 sx={{
                                     ml: 2,
                                     borderColor: 'white',
@@ -72,6 +71,7 @@ const Navbar = () => {
                                         boxShadow: '0 0 10px #FFC107',
                                     },
                                 }}
+                                onClick={handleOpenTransaction}
                             >
                                 Add
                             </Button>
