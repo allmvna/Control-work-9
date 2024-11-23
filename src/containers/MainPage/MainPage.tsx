@@ -4,10 +4,10 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import DeleteIcon from '@mui/icons-material/Delete';
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import {useEffect} from "react";
-import {NavLink} from "react-router-dom";
 import {deleteTransaction, fetchTransaction} from "../slices/sliceTransaction/sliceTransaction.tsx";
 import Loader from "../../UI/Loader/Loader.tsx";
 import ModalForm from "../../components/ModalForm/ModalForm.tsx";
+import {toggleModal} from "../slices/sliceModal/sliceModal.tsx";
 
 const MainPage = () => {
     const dispatch = useAppDispatch();
@@ -17,9 +17,9 @@ const MainPage = () => {
         dispatch(fetchTransaction());
     }, [dispatch]);
 
-    function deleteThisTransaction (id: string) {
-        dispatch(deleteTransaction(id));
-    }
+    const deleteThisTransaction = async (id: string) => {
+        await dispatch(deleteTransaction(id));
+    };
 
     return (
         <>
@@ -74,8 +74,6 @@ const MainPage = () => {
                                             {transaction.type}
                                         </Typography>
                                         <Button
-                                            component={NavLink}
-                                            to={`/${transaction.id}/edit`}
                                             variant="contained"
                                             sx={{ mr: 2,
                                                 backgroundColor: '#1e012b',
@@ -83,6 +81,9 @@ const MainPage = () => {
                                                 '&:hover': {
                                                     transform: 'scale(1.05)',
                                                 },
+                                            }}
+                                            onClick={() => {
+                                                dispatch(toggleModal({ isOpen: true, modalType: 'transaction' }));
                                             }}
                                         >
                                             <DriveFileRenameOutlineIcon/>

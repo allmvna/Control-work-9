@@ -7,7 +7,6 @@ import ModalForm from "../../components/ModalForm/ModalForm.tsx";
 import {toggleModal} from "../slices/sliceModal/sliceModal.tsx";
 import {deleteCategory, fetchCategory} from "../slices/sliceCategory/sliceCategory.tsx";
 import {useEffect} from "react";
-import {NavLink} from "react-router-dom";
 import Loader from "../../UI/Loader/Loader.tsx";
 
 const Category = () => {
@@ -112,8 +111,6 @@ const Category = () => {
                                             {category.type}
                                         </Typography>
                                         <Button
-                                            component={NavLink}
-                                            to={`/${category.id}/edit`}
                                             variant="contained"
                                             sx={{ mr: 2,
                                                 backgroundColor: '#1e012b',
@@ -121,6 +118,9 @@ const Category = () => {
                                                 '&:hover': {
                                                     transform: 'scale(1.05)',
                                                 },
+                                            }}
+                                            onClick={() => {
+                                                dispatch(toggleModal({ isOpen: true, modalType: 'category' }));
                                             }}
                                         >
                                             <DriveFileRenameOutlineIcon/>

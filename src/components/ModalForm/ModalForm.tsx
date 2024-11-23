@@ -1,22 +1,18 @@
-import {IconButton, Modal} from "@mui/material";
+import {Modal} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import FormCategory from "../FormCategory/FormCategory.tsx";
 import {toggleModal} from "../../containers/slices/sliceModal/sliceModal.tsx";
 import FormTransaction from "../FormTransaction/FormTransaction.tsx";
 import Grid from "@mui/material/Grid2";
-import CloseIcon from "@mui/icons-material/Close";
 
 const ModalForm = () => {
     const { isModalOpen, modalType } = useAppSelector((state) => state.modal);
     const dispatch = useAppDispatch();
 
     const handleClose = () => {
-        dispatch(toggleModal({ isOpen: false }));
-    };
-
-    const modalContent = {
-        category: <FormCategory />,
-        transaction: <FormTransaction />,
+        dispatch(toggleModal({
+            isOpen: false,
+        }));
     };
 
     return (
@@ -47,18 +43,8 @@ const ModalForm = () => {
                         boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.3)",
                     }}
                 >
-                    <IconButton
-                        onClick={handleClose}
-                        sx={{
-                            position: "absolute",
-                            top: 8,
-                            right: 8,
-                            color: "gray",
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
-                    {modalType && modalContent[modalType]}
+                    {modalType === "category" && <FormCategory />}
+                    {modalType === "transaction" && <FormTransaction />}
                 </Grid>
             </Modal>
         </>

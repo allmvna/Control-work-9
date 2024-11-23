@@ -89,7 +89,6 @@ const sliceTransaction = createSlice({
             })
             .addCase(fetchTransaction.pending, (state) => {
                 state.isLoading = true;
-                state.error = false;
             })
             .addCase(fetchTransaction.fulfilled, (state, action) => {
                 state.isLoading = false;
